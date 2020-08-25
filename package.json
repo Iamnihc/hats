@@ -9,5 +9,6 @@
         "express": "^4.17.1",
         "socket.io": "^2.3.0",
         "tsc": "^1.20150623.0"
-    }
+    },
+    "scripts": { "start" : "node server.js" }
 }

@@ -1,20 +1,27 @@
 <!doctype html>
 <html>
   <head>
-    <title>Socket.IO chat</title>
+    <title>hats!!</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="hats.js"></script>
+    <style>
+    .typeArea{
+        font-family: monospace;
+    }
+     </style>
   </head>
   <body>
     <form onsubmit="joinRoom(); return false;">
-        <input type=text placeholder="username" name=user>
+        <input type=text placeholder="username" name=user id="usernameBox">
         <input type="submit" >
     </form>
     <button onclick="readyGame()">Get Ready!</button>
     <div id=users></div>
     <div id=word></div>
-    <div id=game></div>
+    <div id=game>
+        <textarea id=typeArea readonly></textarea>
+    </div>
     <div id=respond> </div>
 
 

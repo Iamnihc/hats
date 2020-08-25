@@ -39,10 +39,15 @@ class hatsGame{
   users:Array<HatPlayer>=[]
   currentPlayer:HatPlayer;
   currentWord:string;
+  currentPic:string;
   public checkReady(){
     return users.forEach(element => {
       element.ready=true;
     });
+  }
+
+  public getGameInfo(){
+    return [this.currentPlayer,this.currentWord, this.currentPic]
   }
 
 }
@@ -80,7 +85,9 @@ io.on('connection', function(socket){
   socket.on("start", data=>{
     findHatUser(socket.id).isready=true;
     io.to(hatRef(data)).send("users", getPrettyUsers(data));
-    if()
+    if(getGame(socket.id).checkReady()){
+      socket.to(hatRef(data)).emit("begin", hatsGame[data].getGameInfo() )
+    }
   })
 
 });
