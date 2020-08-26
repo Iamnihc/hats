@@ -71,6 +71,10 @@ function getPrettyUsers(roomNum){
 }
 
 io.on('connection', function(socket){
+
+
+  // wtff
+  socket.join('a', ()=> io.to("a").emit("users","aaaa"));
   
   console.log("CONNECT!!");
 
@@ -83,7 +87,7 @@ io.on('connection', function(socket){
   // join a game
   socket.on("joinHats", data=>{
     hatUsers.push(new HatPlayer(socket.id, data[1]));
-    socket.join(hatRef(data))
+    socket.join(hatRef(data[0]))
     //console.log(data)
     findHatUser(socket.id).currentRoom=data[0];
     //console.log(hatGames[0].users);
@@ -93,15 +97,16 @@ io.on('connection', function(socket){
 
   // player is ready
   socket.on("start", data=>{
-    //console.log(data)
+    console.log(data)
     findHatUser(socket.id).isready=true;
-    console.log(hatRef(data));
-    io.to(hatRef(data)).send("users", getPrettyUsers(data));
+    //console.log(hatRef(data));
+    console.log(socket.rooms)
+    socket.to(hatRef(data)).emit("users", getPrettyUsers(data));
     if(getGame(socket.id).checkReady()){
-      socket.to(hatRef(data)).emit("begin", hatsGame[data].getGameInfo() )
+      io.to(hatRef(data)).emit("begin", hatsGame[data].getGameInfo() )
     }
   })
-
+  socket.on("users", (d)=> console.log("users are "+d))
 });
 
 http.listen(port, function(){
