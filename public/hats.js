@@ -1,14 +1,14 @@
 var socket = io();
-window.onload= ()=>{
-const username;
+var username;
 function joinRoom(){
     console.log("yep")
     username = document.getElementById("usernameBox").value;
-    socket.emit("joinhats",[0,username])
+    socket.emit("joinHats",[0,username])
     return false;
 }
 
-function ready(){
+
+function readyGame(){
     console.log("player is ready");
     socket.emit("start", 0);
 }
@@ -21,6 +21,11 @@ socket.on("turnEnd", data=>{
         document.getElementById("typeArea").readOnly=true;
     }
 });
+
+window.onload= ()=>{
+
+
+
 
 
 };

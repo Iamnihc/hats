@@ -13,22 +13,26 @@ app.get('/', function(req, res){
 
 
 function createRoom(){
-  hatGames.push(new hatsGame)
+  hatGames.push(new hatsGame())
 }
 var hatUsers = [];
 
 
 function findHatUser(id){
+  //console.log(id);
   return hatUsers.find(x=>x.socketid==id)
 }
+
 class HatPlayer{
-  public isready=false;
+  public isReady=false;
   public socketid:string;
   public playing=false;
   public points=0;
   public currentRoom:number;
-  constructor(id:string){
+  public nickname:string;
+  constructor(id:string, nick:string){
     this.socketid=id;
+    this.nickname=nick;
   }
   public getGame(){
     return hatGames[this.currentRoom];
@@ -41,8 +45,8 @@ class hatsGame{
   currentWord:string;
   currentPic:string;
   public checkReady(){
-    return users.forEach(element => {
-      element.ready=true;
+    return this.users.forEach(element => {
+      element.isReady=true;
     });
   }
 
@@ -55,16 +59,19 @@ function hatRef(num){
   return "hats"+num.toString()
 }
 var hatGames = [];
+createRoom();
 function getGame(id){
+  console.log(findHatUser(id).currentRoom);
   return hatGames[findHatUser(id).currentRoom];
 }
 
 function getPrettyUsers(roomNum){
-  return hatGames[roomNum].map(user=> [user.name, user.ready]);
+  //console.log(roomNum)
+  return hatGames[roomNum].users.map(user=> [user.name, user.ready]);
 }
 
 io.on('connection', function(socket){
-  hatUsers.push(new HatPlayer(socket.id))
+  
   console.log("CONNECT!!");
 
   // old chat stuff
@@ -74,16 +81,21 @@ io.on('connection', function(socket){
   });
 
   // join a game
-  socket.on("joinhats", data=>{
+  socket.on("joinHats", data=>{
+    hatUsers.push(new HatPlayer(socket.id, data[1]));
     socket.join(hatRef(data))
-    findHatUser(socket.id).currentRoom=data;
-    hatGames[data].users.push(findHatUser(socket.id))
-    console.log(hatGames[data]);
+    //console.log(data)
+    findHatUser(socket.id).currentRoom=data[0];
+    //console.log(hatGames[0].users);
+    hatGames[data[0]].users.push(findHatUser(socket.id))
+    
   })
 
   // player is ready
   socket.on("start", data=>{
+    //console.log(data)
     findHatUser(socket.id).isready=true;
+    console.log(hatRef(data));
     io.to(hatRef(data)).send("users", getPrettyUsers(data));
     if(getGame(socket.id).checkReady()){
       socket.to(hatRef(data)).emit("begin", hatsGame[data].getGameInfo() )

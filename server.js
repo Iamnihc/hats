@@ -12,18 +12,20 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 function createRoom() {
-    hatGames.push(new hatsGame);
+    hatGames.push(new hatsGame());
 }
 var hatUsers = [];
 function findHatUser(id) {
+    //console.log(id);
     return hatUsers.find(function (x) { return x.socketid == id; });
 }
 var HatPlayer = /** @class */ (function () {
-    function HatPlayer(id) {
-        this.isready = false;
+    function HatPlayer(id, nick) {
+        this.isReady = false;
         this.playing = false;
         this.points = 0;
         this.socketid = id;
+        this.nickname = nick;
     }
     HatPlayer.prototype.getGame = function () {
         return hatGames[this.currentRoom];
@@ -35,8 +37,8 @@ var hatsGame = /** @class */ (function () {
         this.users = [];
     }
     hatsGame.prototype.checkReady = function () {
-        return users.forEach(function (element) {
-            element.ready = true;
+        return this.users.forEach(function (element) {
+            element.isReady = true;
         });
     };
     hatsGame.prototype.getGameInfo = function () {
@@ -48,14 +50,16 @@ function hatRef(num) {
     return "hats" + num.toString();
 }
 var hatGames = [];
+createRoom();
 function getGame(id) {
+    console.log(findHatUser(id).currentRoom);
     return hatGames[findHatUser(id).currentRoom];
 }
 function getPrettyUsers(roomNum) {
-    return hatGames[roomNum].map(function (user) { return [user.name, user.ready]; });
+    //console.log(roomNum)
+    return hatGames[roomNum].users.map(function (user) { return [user.name, user.ready]; });
 }
 io.on('connection', function (socket) {
-    hatUsers.push(new HatPlayer(socket.id));
     console.log("CONNECT!!");
     // old chat stuff
     socket.on('chat message', function (msg) {
@@ -63,18 +67,22 @@ io.on('connection', function (socket) {
         io.emit('chat message', msg);
     });
     // join a game
-    socket.on("joinhats", function (data) {
+    socket.on("joinHats", function (data) {
+        hatUsers.push(new HatPlayer(socket.id, data[1]));
         socket.join(hatRef(data));
-        findHatUser(socket.id).currentRoom = data;
-        hatGames[data].users.push(findHatUser(socket.id));
-        console.log(hatGames[data]);
+        //console.log(data)
+        findHatUser(socket.id).currentRoom = data[0];
+        //console.log(hatGames[0].users);
+        hatGames[data[0]].users.push(findHatUser(socket.id));
     });
     // player is ready
     socket.on("start", function (data) {
+        //console.log(data)
         findHatUser(socket.id).isready = true;
+        console.log(hatRef(data));
         io.to(hatRef(data)).send("users", getPrettyUsers(data));
         if (getGame(socket.id).checkReady()) {
-            socket.to(hatRef(data)).emit("begin");
+            socket.to(hatRef(data)).emit("begin", hatsGame[data].getGameInfo());
         }
     });
 });
