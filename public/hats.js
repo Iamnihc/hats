@@ -12,6 +12,7 @@ function readyGame(){
     console.log("player is ready");
     socket.emit("start", 0);
 }
+
 socket.on("users", x=> {
     console.log(x);
 });

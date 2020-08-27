@@ -17,7 +17,6 @@ function createRoom(){
 }
 var hatUsers = [];
 
-
 function findHatUser(id){
   //console.log(id);
   return hatUsers.find(x=>x.socketid==id)
@@ -39,6 +38,7 @@ class HatPlayer{
   }
 }
 
+
 class hatsGame{
   users:Array<HatPlayer>=[]
   currentPlayer:HatPlayer;
@@ -49,7 +49,15 @@ class hatsGame{
       element.isReady=true;
     });
   }
+  public round(){
+    this.currentPlayer = users[(users.findIndex(this.currentPlayer)+1)%this.users.length];
+    this.currentWord = words[Math.floor(Math.random() * words.length)]; 
+    this.currentPic=""
 
+  }
+  public setup(){
+    this.round()
+  }
   public getGameInfo(){
     return [this.currentPlayer,this.currentWord, this.currentPic]
   }
@@ -74,7 +82,7 @@ io.on('connection', function(socket){
 
 
   // wtff
-  socket.join('a', ()=> io.to("a").emit("users","aaaa"));
+  
   
   console.log("CONNECT!!");
 
@@ -101,8 +109,9 @@ io.on('connection', function(socket){
     findHatUser(socket.id).isready=true;
     //console.log(hatRef(data));
     console.log(socket.rooms)
-    socket.to(hatRef(data)).emit("users", getPrettyUsers(data));
+    io.to(hatRef(data)).emit("users", getPrettyUsers(data));
     if(getGame(socket.id).checkReady()){
+      getGame(socket.id).setup();
       io.to(hatRef(data)).emit("begin", hatsGame[data].getGameInfo() )
     }
   })
