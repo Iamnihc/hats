@@ -42,16 +42,18 @@ class HatPlayer{
 class hatsGame{
   users:Array<HatPlayer>=[]
   currentPlayer:HatPlayer;
+  roundnum=0;
   currentWord:string;
   currentPic:string;
   public checkReady(){
     return this.users.every(element => element.isReady);
   }
   public round(){
-    this.currentPlayer = users[(users.findIndex(this.currentPlayer)+1)%this.users.length];
+    
+    this.currentPlayer = this.users[this.roundnum%this.users.length];
     this.currentWord = words[Math.floor(Math.random() * words.length)]; 
     this.currentPic=""
-
+    this.roundnum++;
   }
   public setup(){
     this.round()
@@ -117,7 +119,8 @@ io.on('connection', function(socket){
     if(getGame(socket.id).checkReady()){
       console.log("all ready")
       getGame(socket.id).setup();
-      io.to(hatRef(data)).emit("begin", hatsGame[data].getGameInfo() )
+      
+      io.to(hatRef(data)).emit("begin", hatGames[data].getGameInfo() )
     }
   })
   
