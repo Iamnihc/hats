@@ -24,7 +24,7 @@ function findHatUser(id){
 
 class HatPlayer{
   public isReady=false;
-  public socketid:string;
+  private socketid:string;
   public playing=false;
   public points=0;
   public currentRoom:number;
@@ -35,6 +35,9 @@ class HatPlayer{
   }
   public getGame(){
     return hatGames[this.currentRoom];
+  }
+  public getSimple(){
+    return {nickname:this.nickname, ready: this.isReady, playing:this.playing, points:this.points, room:this.currentRoom}
   }
 }
 
@@ -59,7 +62,7 @@ class hatsGame{
     this.round()
   }
   public getGameInfo(){
-    return [this.currentPlayer,this.currentWord, this.currentPic]
+    return {playing:this.currentPlayer.getSimple(), word:this.currentWord, picture: this.currentPic};
   }
 
 }
