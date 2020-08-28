@@ -5,7 +5,7 @@ import * as socketio from "socket.io";
 const app = express();
 var http = require('http').Server(app);
 let io = require("socket.io")(http);
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 3001;
 app.use(express.static('public'))
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -45,9 +45,7 @@ class hatsGame{
   currentWord:string;
   currentPic:string;
   public checkReady(){
-    return this.users.forEach(element => {
-      element.isReady=true;
-    });
+    return this.users.every(element => element.isReady);
   }
   public round(){
     this.currentPlayer = users[(users.findIndex(this.currentPlayer)+1)%this.users.length];
@@ -69,13 +67,13 @@ function hatRef(num){
 var hatGames = [];
 createRoom();
 function getGame(id){
-  console.log(findHatUser(id).currentRoom);
+  //console.log(findHatUser(id).currentRoom);
   return hatGames[findHatUser(id).currentRoom];
 }
 
 function getPrettyUsers(roomNum){
-  //console.log(roomNum)
-  return hatGames[roomNum].users.map(user=> [user.name, user.ready]);
+  //console.log(hatGames[roomNum].users)
+  return hatGames[roomNum].users.map(user=> [user.nickname, user.isReady]);
 }
 
 io.on('connection', function(socket){
@@ -88,12 +86,17 @@ io.on('connection', function(socket){
 
   // old chat stuff
   socket.on('chat message', function(msg){
-    console.log("send");
+    //console.log("send");
     io.emit('chat message', msg);
   });
 
   // join a game
   socket.on("joinHats", data=>{
+    console.log(data)
+    if (hatUsers.find(x=> x.nickname == data[1]) ){
+      socket.emit("err", "user already exists")
+      return ;
+    }
     hatUsers.push(new HatPlayer(socket.id, data[1]));
     socket.join(hatRef(data[0]))
     //console.log(data)
@@ -106,16 +109,18 @@ io.on('connection', function(socket){
   // player is ready
   socket.on("start", data=>{
     console.log(data)
-    findHatUser(socket.id).isready=true;
+    findHatUser(socket.id).isReady=true;
     //console.log(hatRef(data));
-    console.log(socket.rooms)
+    //console.log(socket.rooms);
+    //console.log(hatGames[0].users);
     io.to(hatRef(data)).emit("users", getPrettyUsers(data));
     if(getGame(socket.id).checkReady()){
+      console.log("all ready")
       getGame(socket.id).setup();
       io.to(hatRef(data)).emit("begin", hatsGame[data].getGameInfo() )
     }
   })
-  socket.on("users", (d)=> console.log("users are "+d))
+  
 });
 
 http.listen(port, function(){

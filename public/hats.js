@@ -12,7 +12,10 @@ function readyGame(){
     console.log("player is ready");
     socket.emit("start", 0);
 }
-
+socket.on("err", x=>{
+    alert("error");
+    alert (x);
+})
 socket.on("users", x=> {
     console.log(x);
 });
@@ -22,11 +25,7 @@ socket.on("turnEnd", data=>{
         document.getElementById("typeArea").readOnly=true;
     }
 });
-
+socket.on("begin", x=> console.log(x));
 window.onload= ()=>{
-
-
-
-
 
 };
