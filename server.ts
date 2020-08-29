@@ -52,17 +52,17 @@ class hatsGame{
     return this.users.every(element => element.isReady);
   }
   public round(){
-    
+    this.roundnum++;
     this.currentPlayer = this.users[this.roundnum%this.users.length];
     this.currentWord = words[Math.floor(Math.random() * words.length)]; 
     this.currentPic=""
-    this.roundnum++;
+    
   }
   public setup(){
     this.round()
   }
   public getGameInfo(){
-    return {playing:this.currentPlayer.getSimple(), word:this.currentWord, picture: this.currentPic};
+    return {playing:this.currentPlayer.getSimple(), wordLength:this.currentWord.length, picture: this.currentPic};
   }
 
 }
@@ -124,6 +124,7 @@ io.on('connection', function(socket){
       getGame(socket.id).setup();
       
       io.to(hatRef(data)).emit("begin", hatGames[data].getGameInfo() )
+      io.to(hatGames[data].currentPlayer.socketid).emit(hatGames[data].currentWord)
     }
   })
   

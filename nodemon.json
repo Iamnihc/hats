@@ -1,5 +1,5 @@
 {
-    "watch": ["./"],
-    "ext": "ts js",
+    "watch": ["./server.ts", "public/hats.js"],
+    "ext": "ts, js, html",
     "exec": "ts-node ./server.ts"
   }

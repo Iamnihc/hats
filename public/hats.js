@@ -17,6 +17,7 @@ socket.on("err", x=>{
     alert (x);
 })
 socket.on("users", x=> {
+    document.getElementById("users").innerHTML=x;
     console.log(x);
 });
 socket.on("turnEnd", data=>{
@@ -25,7 +26,12 @@ socket.on("turnEnd", data=>{
         document.getElementById("typeArea").readOnly=true;
     }
 });
-socket.on("begin", x=> console.log(x));
+socket.on("begin", x=> {
+    console.log(x)
+}
+);
 window.onload= ()=>{
-
+    document.getElementById("typeArea").oninput = function (v){
+        socket.emit("typing", v.data)
+    }
 };
