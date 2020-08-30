@@ -74,7 +74,7 @@ class hatsGame{
     return {playing:this.currentPlayer.getSimple(), wordLength:this.currentWord.length, picture: this.currentPic};
   }
   public allGuessed(){
-    return users.every(x=> x.guessed || !x.online)
+    return this.users.every(x=> x.guessed || !x.online)
   }
   public resetGuess(){
     this.users.forEach(element => {
