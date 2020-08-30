@@ -27,13 +27,14 @@ socket.on("users", x=> {
 });
 socket.on("begin", data=>{
     console.log(data);
-    document.getElementById("typeArea").readOnly = false;
+    document.getElementById("typeArea").readOnly=true;
     isDrawer=false;
     document.getElementById("word").innerHTML='_'.repeat(data.wordLength)
     document.getElementById("currentArtist").innerHTML=data.playing.nickname;
     if (data.playing.nickname==username){
         isDrawer=true;
-        document.getElementById("typeArea").readOnly=true;
+        document.getElementById("typeArea").readOnly = false;
+        
         
     }
     
@@ -43,12 +44,12 @@ socket.on("word", x=> {
     document.getElementById("currentArtist").innerHTML="YOU!";
 });
 
-socket.on("typed", x=>{
+socket.on("typed", function (x){
     if (isDrawer){
-        break;
+        
     }
     else{
-        
+        document.getElementById("typeArea").value = x;
     }
     
 });

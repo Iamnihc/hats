@@ -64,6 +64,7 @@ class hatsGame{
     this.currentPic="";
     this.resetGuess();
     this.currentPlayer.guessed= true;
+    this.currentPlayer.playing = true;
     
   }
   public setup(){
@@ -78,6 +79,11 @@ class hatsGame{
   public resetGuess(){
     this.users.forEach(element => {
       element.guessed=false;
+    });
+  }
+  public resetPlaying(){
+    this.users.forEach(element => {
+      element.playing=false;
     });
   }
 
