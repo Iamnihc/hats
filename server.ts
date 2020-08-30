@@ -43,11 +43,12 @@ class HatPlayer{
 
 
 class hatsGame{
-  users:Array<HatPlayer>=[]
-  currentPlayer:HatPlayer;
+  private users:Array<HatPlayer>=[]
+  public currentPlayer:HatPlayer;
   roundnum=0;
-  currentWord:string;
-  currentPic:string;
+  private currentWord:string;
+  public currentPic:string;
+  public started = false;
   public checkReady(){
     return this.users.every(element => element.isReady);
   }
@@ -108,12 +109,16 @@ io.on('connection', function(socket){
     findHatUser(socket.id).currentRoom=data[0];
     //console.log(hatGames[0].users);
     hatGames[data[0]].users.push(findHatUser(socket.id))
-    
+    io.to(hatRef(data)).emit("users", getPrettyUsers(data));
   })
 
   // player is ready
   socket.on("start", data=>{
     console.log(data)
+    if (hatGames[data].started){
+      socket.emit("err", "This game is already in progress. get ready later!")
+      return false;
+    }
     findHatUser(socket.id).isReady=true;
     //console.log(hatRef(data));
     //console.log(socket.rooms);

@@ -17,7 +17,10 @@ socket.on("err", x=>{
     alert (x);
 })
 socket.on("users", x=> {
-    document.getElementById("users").innerHTML=x;
+    x.forEach(element => {
+        document.getElementById("users").innerHTML=element[0] + " is "+ (element[1]?" Not ":" ") + "ready";
+    });
+    
     console.log(x);
 });
 socket.on("turnEnd", data=>{
