@@ -1,5 +1,6 @@
 var socket = io();
 var username;
+var isDrawer = false;
 function joinRoom(){
     console.log("yep")
     username = document.getElementById("usernameBox").value;
@@ -24,19 +25,39 @@ socket.on("users", x=> {
     
     console.log(x);
 });
-socket.on("turnEnd", data=>{
+socket.on("begin", data=>{
+    console.log(data);
     document.getElementById("typeArea").readOnly = false;
-    if (data.drawingUser==username){
+    isDrawer=false;
+    document.getElementById("word").innerHTML='_'.repeat(data.wordLength)
+    document.getElementById("currentArtist").innerHTML=data.playing.nickname;
+    if (data.playing.nickname==username){
+        isDrawer=true;
         document.getElementById("typeArea").readOnly=true;
+        
     }
+    
 });
-socket.on("begin", x=> {
-    console.log(x)
-}
-);
+socket.on("word", x=> {
+    document.getElementById("word").innerHTML=x;
+    document.getElementById("currentArtist").innerHTML="YOU!";
+});
+
+socket.on("typed", x=>{
+    if (isDrawer){
+        break;
+    }
+    else{
+        
+    }
+    
+});
+
+
 window.onload= ()=>{
     document.getElementById("typeArea").oninput = function (v){
-        socket.emit("typing", v.data)
+        console.log(v);
+        socket.emit("typing",document.getElementById("typeArea").value )
     }
 };
 

@@ -148,12 +148,21 @@ io.on('connection', function(socket){
       console.log("all ready")
       getGame(socket.id).setup();
       io.to(hatRef(data)).emit("begin", hatGames[data].getGameInfo() )
-      io.to(hatGames[data].currentPlayer.socketid).emit("Word", hatGames[data].currentWord);
+      io.to(hatGames[data].currentPlayer.socketid).emit("word", hatGames[data].currentWord);
     }
   })
   socket.on("checkword", word=>{
     if (findHatUser(socket.id).getGame().checkWord(word)){
       findHatUser(socket.id).getGame().guessed = true;
+    }
+  });
+  socket.on("typing", text=>{
+    //console.log(text);
+    if(findHatUser(socket.id).playing){
+    io.to(hatRef(findHatUser(socket.id).currentRoom)).emit("typed", text)
+    }
+    else{
+      console.log("we got a cheater i think")
     }
   })
   socket.on('disconnect', (reason) => {
