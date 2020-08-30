@@ -160,6 +160,7 @@ io.on('connection', function(socket){
   socket.on("checkword", word=>{
     if (findHatUser(socket.id).getGame().checkWord(word)){
       findHatUser(socket.id).getGame().guessed = true;
+      socket.emit("correct")
     }
   });
   socket.on("typing", text=>{
@@ -174,6 +175,8 @@ io.on('connection', function(socket){
   socket.on('disconnect', (reason) => {
     if (findHatUser(socket.id)){
       findHatUser(socket.id).online = false;
+
+      findHatUser(socket.id).isReady = false;
       io.to(hatRef(findHatUser(socket.id).currentRoom)).emit("users", getPrettyUsers(findHatUser(socket.id).currentRoom));
     }
 

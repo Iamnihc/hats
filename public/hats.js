@@ -1,3 +1,4 @@
+
 var socket = io();
 var username;
 var isDrawer = false;
@@ -53,6 +54,16 @@ socket.on("typed", function (x){
     }
     
 });
+socket.on("correct", function(){
+    alert("you got it!");
+});
+
+function guess(){
+    console.log("yep")
+    guess = document.getElementById("guessBox").value;
+    socket.emit("checkword",guess)
+    return false;
+}
 
 
 window.onload= ()=>{

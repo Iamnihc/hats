@@ -29,7 +29,12 @@
     <div id=game>
         <textarea id=typeArea ></textarea>
     </div>
-    <div id=respond> </div>
+    <div id=respond> 
+      <form onsubmit="guess(); return false;">
+        <input type=text placeholder="what is it" name=guess id="guessBox">
+        <input type="submit" value="Guess the drawing" >
+    </form>
+    </div>
 
 
 
