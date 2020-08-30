@@ -58,14 +58,18 @@ class hatsGame{
     return this.users.every(element => element.isReady||!element.online);
   }
   public round(){
+    
     this.roundnum++;
+    this.resetPlaying();
+    this.resetGuess();
+    //console.log("user is "+this.roundnum%this.users.length);
     this.currentPlayer = this.users[this.roundnum%this.users.length];
     this.currentWord = words[Math.floor(Math.random() * words.length)]; 
     this.currentPic="";
-    this.resetGuess();
+
     this.currentPlayer.guessed= true;
     this.currentPlayer.playing = true;
-    
+    console.log(this.getGameInfo());
   }
   public setup(){
     this.round()
@@ -74,10 +78,17 @@ class hatsGame{
     return {playing:this.currentPlayer.getSimple(), wordLength:this.currentWord.length, picture: this.currentPic};
   }
   public allGuessed(){
-    return this.users.every(x=> x.guessed || !x.online)
+    
+    return this.users.every(x=> {
+      //console.log(x.guessed);
+      return x.guessed || !x.online
+    }
+      )
+
   }
   public resetGuess(){
     this.users.forEach(element => {
+
       element.guessed=false;
     });
   }
@@ -87,7 +98,7 @@ class hatsGame{
     });
   }
   public checkWord(word){
-    return word=this.currentWord;
+    return word==this.currentWord;
   }
 
 }
@@ -120,7 +131,7 @@ io.on('connection', function(socket){
   // join a game
   socket.on("joinHats", data=>{
     
-    console.log(data)
+    //console.log(data)
     if (hatUsers.find(x=> x.nickname == data[1])){
 
       if (hatUsers.find(x=> x.nickname == data[1]).onlne){
@@ -152,7 +163,7 @@ io.on('connection', function(socket){
     if (!realplayer){
       return;
     }
-    console.log(data)
+    //console.log(data)
     if (hatGames[data].started){
       socket.emit("err", "This game is already in progress. get ready later!")
       return false;
@@ -160,8 +171,8 @@ io.on('connection', function(socket){
     findHatUser(socket.id).isReady=true;
     io.to(hatRef(data)).emit("users", getPrettyUsers(data));
     if(getGame(socket.id).checkReady()){
-      console.log("all ready")
-      getGame(socket.id).setup();
+      //console.log("all ready")
+      getGame(socket.id).round();
       io.to(hatRef(data)).emit("begin", hatGames[data].getGameInfo() )
       io.to(hatGames[data].currentPlayer.socketid).emit("word", hatGames[data].currentWord);
     }
@@ -173,11 +184,17 @@ io.on('connection', function(socket){
     if (getGame(socket.id).checkWord(word)){
       findHatUser(socket.id).guessed = true;
       socket.emit("correct")
+      
       if (getGame(socket.id).allGuessed()){
-        io.to(hatRef(findHatUser(socket.id).currentRoom)).emit("begin", getGame(socket.id).getGameInfo() );
+        getGame(socket.id).round();
+        console.log("all guess");
+        console.log(getGame(socket.id).currentPlayer);
+        console.log("info");
+        console.log(getGame(socket.id).getGameInfo() )
+        io.to(hatRef(findHatUser(socket.id).currentRoom)).emit("begin",hatGames[0].getGameInfo() );
         io.to(getGame(socket.id).currentPlayer.socketid).emit("word", getGame(socket.id).currentWord);
 
-        getGame(socket.id).round();
+
       }
     }
   });

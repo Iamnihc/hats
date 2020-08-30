@@ -33,6 +33,7 @@ socket.on("users", x=> {
     console.log(x);
 });
 socket.on("begin", data=>{
+    console.log("round!")
     console.log(data);
     document.getElementById("typeArea").readOnly=true;
     isDrawer=false;
