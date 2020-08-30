@@ -2,6 +2,7 @@
 var socket = io();
 var username;
 var isDrawer = false;
+let word = ""
 function joinRoom(){
     console.log("yep")
     username = document.getElementById("usernameBox").value;
@@ -46,6 +47,7 @@ socket.on("begin", data=>{
     
 });
 socket.on("word", x=> {
+    word = x;
     document.getElementById("word").innerHTML=x;
     document.getElementById("currentArtist").innerHTML="YOU!";
 });
@@ -68,6 +70,10 @@ socket.on("correct", function(){
 
 window.onload= ()=>{
     document.getElementById("typeArea").oninput = function (v){
+        word.split("").forEach(char=>{
+            document.getElementById("typeArea").value= document.getElementById("typeArea").value.replace(char,"")
+        })
+        document.getElementById("typeArea")
         console.log(v);
         socket.emit("typing",document.getElementById("typeArea").value )
     }

@@ -86,6 +86,9 @@ class hatsGame{
       element.playing=false;
     });
   }
+  public checkWord(word){
+    return word=this.currentWord;
+  }
 
 }
 
@@ -105,7 +108,7 @@ function getPrettyUsers(roomNum){
 }
 
 io.on('connection', function(socket){
-  
+  let realplayer = false;
   console.log("CONNECT!!");
 
   // old chat stuff
@@ -116,6 +119,7 @@ io.on('connection', function(socket){
 
   // join a game
   socket.on("joinHats", data=>{
+    
     console.log(data)
     if (hatUsers.find(x=> x.nickname == data[1])){
 
@@ -128,6 +132,7 @@ io.on('connection', function(socket){
         hatUsers.find(x=> x.nickname == data[1]).online = true;
         hatUsers.find (x=> x.nickname == data[1]).resetiD(socket.id);
         io.to(hatRef(data[0])).emit("users", getPrettyUsers(data[0]));
+        realplayer=true;
         return;
       }
     }
@@ -139,10 +144,14 @@ io.on('connection', function(socket){
     //console.log(hatGames[0].users);
     hatGames[data[0]].users.push(findHatUser(socket.id))
     io.to(hatRef(data[0])).emit("users", getPrettyUsers(data[0]));
+    realplayer = true;
   })
 
   // player is ready
   socket.on("start", data=>{
+    if (!realplayer){
+      return;
+    }
     console.log(data)
     if (hatGames[data].started){
       socket.emit("err", "This game is already in progress. get ready later!")
@@ -158,12 +167,24 @@ io.on('connection', function(socket){
     }
   })
   socket.on("checkword", word=>{
-    if (findHatUser(socket.id).getGame().checkWord(word)){
-      findHatUser(socket.id).getGame().guessed = true;
+    if (!realplayer){
+      return;
+    }
+    if (getGame(socket.id).checkWord(word)){
+      findHatUser(socket.id).guessed = true;
       socket.emit("correct")
+      if (getGame(socket.id).allGuessed()){
+        io.to(hatRef(findHatUser(socket.id).currentRoom)).emit("begin", getGame(socket.id).getGameInfo() );
+        io.to(getGame(socket.id).currentPlayer.socketid).emit("word", getGame(socket.id).currentWord);
+
+        getGame(socket.id).round();
+      }
     }
   });
   socket.on("typing", text=>{
+    if (!realplayer){
+      return;
+    }
     //console.log(text);
     if(findHatUser(socket.id).playing){
     io.to(hatRef(findHatUser(socket.id).currentRoom)).emit("typed", text)
