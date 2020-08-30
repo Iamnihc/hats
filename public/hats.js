@@ -8,7 +8,12 @@ function joinRoom(){
     socket.emit("joinHats",[0,username])
     return false;
 }
-
+function guess(){
+    console.log("yep")
+    playerGuess = document.getElementById("guessBox").value;
+    socket.emit("checkword",playerGuess)
+    return false;
+}
 
 function readyGame(){
     console.log("player is ready");
@@ -58,12 +63,7 @@ socket.on("correct", function(){
     alert("you got it!");
 });
 
-function guess(){
-    console.log("yep")
-    guess = document.getElementById("guessBox").value;
-    socket.emit("checkword",guess)
-    return false;
-}
+
 
 
 window.onload= ()=>{
