@@ -17,8 +17,9 @@ socket.on("err", x=>{
     alert (x);
 })
 socket.on("users", x=> {
+    document.getElementById("users").innerHTML="";
     x.forEach(element => {
-        document.getElementById("users").innerHTML=element[0] + " is "+ (element[1]?" Not ":" ") + "ready";
+        document.getElementById("users").innerHTML+=element[0] + " is "+ (element[1]?" ":" not ") + "ready"  + " and has " + (element[2]?" ":" Not ") + " Guessed the word. "+(element[3]?"online":"OFFLINE!!")+"<br>";
     });
     
     console.log(x);
@@ -38,3 +39,4 @@ window.onload= ()=>{
         socket.emit("typing", v.data)
     }
 };
+
