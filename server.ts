@@ -1,4 +1,5 @@
 var users
+
 import * as dataJSON from './words.json';
 const words = dataJSON.words;
 import * as express from "express";
