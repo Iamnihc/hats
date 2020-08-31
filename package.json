@@ -13,7 +13,7 @@
     "scripts": {
         "start": "tsc && node server.js",
         "dev": "ts-node-dev --respawn -- server.ts"
-      },
+    },
     "devDependencies": {
         "ts-node": "^9.0.0",
         "ts-node-dev": "^1.0.0-pre.61",
