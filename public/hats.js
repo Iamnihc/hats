@@ -68,7 +68,7 @@ socket.on("correct", function () {
   alert("you got it!");
 });
 
-banned = "abcdefghijkmqrstyz";
+banned = "abcdefghikmqrstyzABFGHKMPQRSTZ";
 window.onload = () => {
   document.getElementById("typeArea").oninput = function (v) {
     banned.split("").forEach((char) => {
