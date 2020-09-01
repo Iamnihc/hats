@@ -199,24 +199,25 @@ io.on("connection", function (socket) {
       // FIX THIS ITS VERY IMPORTATN
       io.to(hatRef(0)).emit("users", getPrettyUsers(0));
       if (getGame(socket.id).allGuessed()) {
-        if (getGame(socket.id).)
-        getGame(socket.id).round();
-        console.log("all guess");
-        console.log(getGame(socket.id).currentPlayer);
-        console.log("info");
-        console.log(getGame(socket.id).getGameInfo());
-        io.to(hatRef(findHatUser(socket.id).currentRoom)).emit(
-          "begin",
-          hatGames[0].getGameInfo()
-        );
-        io.to(hatRef(findHatUser(socket.id).currentRoom)).emit(
-          "typed",
-          startertext
-        );
-        io.to(getGame(socket.id).currentPlayer.socketid).emit(
-          "word",
-          getGame(socket.id).currentWord
-        );
+        if (getGame(socket.id).checkReady()) {
+          getGame(socket.id).round();
+          console.log("all guess");
+          console.log(getGame(socket.id).currentPlayer);
+          console.log("info");
+          console.log(getGame(socket.id).getGameInfo());
+          io.to(hatRef(findHatUser(socket.id).currentRoom)).emit(
+            "begin",
+            hatGames[0].getGameInfo()
+          );
+          io.to(hatRef(findHatUser(socket.id).currentRoom)).emit(
+            "typed",
+            startertext
+          );
+          io.to(getGame(socket.id).currentPlayer.socketid).emit(
+            "word",
+            getGame(socket.id).currentWord
+          );
+        }
       }
     }
   });
