@@ -1,17 +1,15 @@
 {
-	"compilerOptions": {
-		"target": "es5",
-		"module": "commonjs",
-		"moduleResolution": "node",
-		"sourceMap": true,
-        "resolveJsonModule": true,
-		"emitDecoratorMetadata": true,
-		"experimentalDecorators": true,
-		"removeComments": false,
-		
-		"suppressImplicitAnyIndexErrors": true
-	},
-	"files": [
-		"typings.d.ts"
-	]
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+    "esModuleInterop": true,
+    "suppressImplicitAnyIndexErrors": true
+  },
+  "files": ["typings.d.ts"]
 }
