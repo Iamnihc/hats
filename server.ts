@@ -22,7 +22,7 @@ function findHatUser(id) {
   //console.log(id);
   return hatUsers.find((x) => x.socketid == id);
 }
-
+var startertext = "";
 class HatPlayer {
   public isReady = false;
   private socketid: string;
@@ -195,7 +195,8 @@ io.on("connection", function (socket) {
     if (getGame(socket.id).checkWord(word)) {
       findHatUser(socket.id).guessed = true;
       socket.emit("correct");
-
+      // FIX THIS ITS VERY IMPORTATN
+      io.to(hatRef(0)).emit("users", getPrettyUsers(0));
       if (getGame(socket.id).allGuessed()) {
         getGame(socket.id).round();
         console.log("all guess");
@@ -205,6 +206,10 @@ io.on("connection", function (socket) {
         io.to(hatRef(findHatUser(socket.id).currentRoom)).emit(
           "begin",
           hatGames[0].getGameInfo()
+        );
+        io.to(hatRef(findHatUser(socket.id).currentRoom)).emit(
+          "typed",
+          startertext
         );
         io.to(getGame(socket.id).currentPlayer.socketid).emit(
           "word",
