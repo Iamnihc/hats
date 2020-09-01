@@ -1,5 +1,7 @@
 var users
-const words = ["hat","person"]
+
+import * as dataJSON from './words.json';
+const words = dataJSON.words;
 import * as express from "express";
 import * as socketio from "socket.io";
 const app = express();
