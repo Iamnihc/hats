@@ -181,6 +181,7 @@ io.on("connection", function (socket) {
     if (getGame(socket.id).checkReady()) {
       //console.log("all ready")
       getGame(socket.id).round();
+      getGame(socket.id).started = true;
       io.to(hatRef(data)).emit("begin", hatGames[data].getGameInfo());
       io.to(hatGames[data].currentPlayer.socketid).emit(
         "word",
@@ -198,6 +199,7 @@ io.on("connection", function (socket) {
       // FIX THIS ITS VERY IMPORTATN
       io.to(hatRef(0)).emit("users", getPrettyUsers(0));
       if (getGame(socket.id).allGuessed()) {
+        if (getGame(socket.id).)
         getGame(socket.id).round();
         console.log("all guess");
         console.log(getGame(socket.id).currentPlayer);
